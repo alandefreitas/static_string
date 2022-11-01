@@ -7,6 +7,25 @@
 # Official repository: https://github.com/boostorg/static_string
 #
 
+function (DoGroupSources curdir rootdir folder)
+    file (GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
+    foreach (child ${children})
+        if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+            DoGroupSources (${curdir}/${child} ${rootdir} ${folder})
+        elseif (${child} STREQUAL "CMakeLists.txt")
+            source_group("" FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+        else()
+            string (REGEX REPLACE ^${rootdir} ${folder} groupname ${curdir})
+            string (REPLACE "/" "\\" groupname ${groupname})
+            source_group (${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+        endif()
+    endforeach()
+endfunction()
+
+function (GroupSources curdir folder)
+    DoGroupSources (${curdir} ${curdir} ${folder})
+endfunction()
+
 GroupSources (include/boost/static_string static_string)
 GroupSources (test "/")
 
@@ -16,7 +35,6 @@ add_executable (tests
     static_string.cpp
 )
 
-target_link_libraries(tests
-    )
+target_link_libraries(tests boost_static_string)
 
 set_property(TARGET tests PROPERTY FOLDER "tests")
