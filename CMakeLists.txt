@@ -44,7 +44,7 @@ endif ()
 if (BOOST_STATIC_STRING_FIND_PACKAGE_BOOST)
     find_package(Boost 1.78.0 REQUIRED COMPONENTS container)
 elseif (BOOST_STATIC_STRING_IS_ROOT)
-    set(BOOST_STATIC_STRING_UNIT_TEST_LIBRARIES)
+    set(BOOST_STATIC_STRING_UNIT_TEST_LIBRARIES core)
     set(BOOST_INCLUDE_LIBRARIES static_string assert container_hash static_assert throw_exception utility ${BOOST_STATIC_STRING_UNIT_TEST_LIBRARIES})
     set(BOOST_EXCLUDE_LIBRARIES static_string)
     set(CMAKE_FOLDER Dependencies)
@@ -70,7 +70,7 @@ add_library(Boost::static_string ALIAS boost_static_string)
 
 target_compile_features(boost_static_string INTERFACE cxx_constexpr)
 if (BOOST_SUPERPROJECT_VERSION)
-    target_include_directories(boost_static_string PUBLIC "${PROJECT_SOURCE_DIR}/include")
+    target_include_directories(boost_static_string INTERFACE "${PROJECT_SOURCE_DIR}/include")
 else ()
     target_include_directories(boost_static_string
             INTERFACE
